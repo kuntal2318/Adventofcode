@@ -3,3 +3,6 @@
 ################################################################################
 
 /.vs
+/Adventofcode/.vs
+/Adventofcode/Day01/obj
+/Adventofcode/Day01/bin
