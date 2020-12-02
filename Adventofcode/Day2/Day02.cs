@@ -9,44 +9,36 @@ namespace Day2
         static void Main(string[] args)
         {
             string[] fileData = System.IO.File.ReadAllLines("..\\..\\..\\Values.txt");
-            var inputData = InputMapping(fileData);
-            int counter = InputValidationCount(inputData);
-            Console.WriteLine("Total Count: " + counter);
+            var inputData = DataProcessing(fileData);
+            Console.WriteLine("Total Correct Password from Policy 1: " + inputData.Item1);
+            Console.WriteLine("Total Correct Password from Policy 2: " + inputData.Item2);
             Console.ReadKey();
         }
 
-        static List<InterpreterClass> InputMapping(string[] fileData)
+        static (int, int) DataProcessing(string[] fileData)
         {
-            List<InterpreterClass> listofobject = new List<InterpreterClass>();
+            var Policy1CorrectPasswordCount = 0;
+            var Policy2CorrectPasswordCount = 0;
             foreach (var data in fileData)
             {
-                InterpreterClass sample = new InterpreterClass();
-                var a = Regex.Matches(data, @"([0-9]{1,3})(?=-)", RegexOptions.IgnoreCase);
-                sample.MinCount = int.Parse(a[0].Value);
-                var b = Regex.Matches(data, @"([0-9]{1,3})(?= )", RegexOptions.IgnoreCase);
-                sample.MaxCount = int.Parse(b[0].Value);
-                var c = Regex.Matches(data, @"([a-z]{1})(?=:)", RegexOptions.IgnoreCase);
-                sample.Character = char.Parse(c[0].Value);
-                sample.ValidationInput = data.Split(' ')[2];
-                listofobject.Add(sample);
-            }
-            return listofobject;
-        }
+                var regexGroup = Regex.Matches(data, @"([\d]+)-([\d]+) ([a-z]): ([a-z]+)", RegexOptions.IgnoreCase);
+                var FirstNumber = int.Parse(regexGroup[0].Groups[1].Value);
+                var SecondNumber = int.Parse(regexGroup[0].Groups[2].Value);
+                var Character = char.Parse(regexGroup[0].Groups[3].Value);
+                var PasswordToValidate = regexGroup[0].Groups[4].Value;
 
-        static int InputValidationCount(List<InterpreterClass> interpreters)
-        {
-            int count = 0;
-            int loopCounter ;
-            foreach (var data in interpreters)
-            {
-                loopCounter = 0;
-                loopCounter = data.ValidationInput.Split(data.Character).Length - 1;
-                if(data.MinCount<=loopCounter && loopCounter <= data.MaxCount)
-                {
-                    count++;
-                }
+                //Policy 1 evaluation
+                var charOccuranceCounter = PasswordToValidate.Split(Character).Length - 1;
+                if (FirstNumber <= charOccuranceCounter && charOccuranceCounter <= SecondNumber)
+                    Policy1CorrectPasswordCount++;
+
+                //Policy 2 evaluation
+                char Location1Char = PasswordToValidate[FirstNumber - 1];
+                char Location2Char = PasswordToValidate[SecondNumber - 1];
+                if ((Location1Char != Location2Char) && (Location1Char == Character || Location2Char == Character))
+                    Policy2CorrectPasswordCount++;
             }
-            return count;
+            return (Policy1CorrectPasswordCount, Policy2CorrectPasswordCount);
         }
     }
 }
