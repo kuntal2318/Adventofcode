@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace Day2
@@ -8,15 +8,10 @@ namespace Day2
     {
         static void Main(string[] args)
         {
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
             string[] fileData = System.IO.File.ReadAllLines("..\\..\\..\\Values.txt");
             var inputData = DataProcessing(fileData);
             Console.WriteLine("Total Correct Password from Policy 1: " + inputData.Item1);
             Console.WriteLine("Total Correct Password from Policy 2: " + inputData.Item2);
-            stopwatch.Stop();
-            Console.WriteLine(stopwatch.ElapsedMilliseconds);
-            Console.ReadKey();
         }
 
         static (int, int) DataProcessing(string[] fileData)
